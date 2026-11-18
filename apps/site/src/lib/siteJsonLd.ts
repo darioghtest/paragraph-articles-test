@@ -12,6 +12,28 @@ export function websiteId(site: URL | undefined): string {
   return `${absoluteUrl("/", site)}#website`
 }
 
+export interface Breadcrumb {
+  name: string
+  /** Site path, without the base. */
+  path: string
+}
+
+export function breadcrumbJsonLd(
+  items: Breadcrumb[],
+  site: URL | undefined
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path, site),
+    })),
+  }
+}
+
 export function siteJsonLd(site: URL | undefined) {
   const siteUrl = absoluteUrl("/", site)
   return [
