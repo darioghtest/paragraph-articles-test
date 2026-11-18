@@ -1,5 +1,5 @@
 ---
-title: "Lumen 1.5: shareable doc previews"
+title: "Lumen 1.5: share a preview of any docs change"
 authors: [{"name":"darioghtest"}]
 updatedAt: 2026-11-18
 categories: ["changelog"]
