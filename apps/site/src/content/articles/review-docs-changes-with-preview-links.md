@@ -1,6 +1,6 @@
 ---
-cover: {"src":"/images/review-docs-changes-with-preview-links-cover.png","alt":"How to review docs changes with preview links","width":1200,"height":630}
-title: "How to review docs changes with preview links"
+cover: {"src":"/images/review-docs-changes-with-preview-links-cover.png","alt":"How to review docs changes with a preview link","width":1200,"height":630}
+title: "How to review docs changes with a preview link"
 authors: [{"name":"darioghtest"}]
 updatedAt: 2026-11-18
 categories: ["guides"]
