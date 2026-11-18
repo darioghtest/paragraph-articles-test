@@ -1,5 +1,5 @@
 ---
-title: "Writing release notes people read"
+title: "How to write release notes people read"
 authors: [{"name":"darioghtest"}]
 updatedAt: 2026-11-18
 categories: ["guides"]
