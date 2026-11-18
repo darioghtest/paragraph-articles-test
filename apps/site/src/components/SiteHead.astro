@@ -2,11 +2,9 @@
 /**
  * Shared <head> contents: title, description, canonical, Open Graph and
  * Twitter cards, article times, JSON-LD, and alternates.
- *
- * Deliberately left out (this repo is a test fixture for tools that detect
- * them): og:image:alt, BreadcrumbList JSON-LD, and /llms.txt.
  */
 import { absoluteUrl, withBase } from "@/lib/articles"
+import { type Breadcrumb, breadcrumbJsonLd } from "@/lib/siteJsonLd"
 
 export interface AlternateLink {
   type: string
@@ -28,7 +26,11 @@ interface Props {
   canonical: string
   /** Site path of the image, without the base. */
   image?: string
+  imageAlt?: string
+  imageWidth?: number
+  imageHeight?: number
   jsonLd?: unknown
+  breadcrumbs?: Breadcrumb[]
   type?: "website" | "article"
   alternates?: AlternateLink[]
   article?: ArticleMeta
@@ -41,7 +43,11 @@ const {
   description,
   canonical,
   image = "/images/og-default.png",
+  imageAlt,
+  imageWidth,
+  imageHeight,
   jsonLd,
+  breadcrumbs,
   type = "website",
   alternates = [],
   article,
@@ -67,6 +73,13 @@ const jsonLdScript = (data: unknown) =>
 <meta property="og:description" content={description} />
 <meta property="og:url" content={pageUrl} />
 <meta property="og:image" content={imageUrl} />
+{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+{imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+{
+  imageHeight && (
+    <meta property="og:image:height" content={String(imageHeight)} />
+  )
+}
 <meta property="og:site_name" content="Lumen" />
 {
   article && (
@@ -96,6 +109,15 @@ const jsonLdScript = (data: unknown) =>
       is:inline
       type="application/ld+json"
       set:html={jsonLdScript(jsonLd)}
+    />
+  )
+}
+{
+  breadcrumbs && breadcrumbs.length > 0 && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={jsonLdScript(breadcrumbJsonLd(breadcrumbs, site))}
     />
   )
 }
