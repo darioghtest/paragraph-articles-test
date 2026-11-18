@@ -1,5 +1,25 @@
 import { absoluteUrl } from "./articles"
 
+export interface Crumb {
+  name: string
+  /** Site path, without the base. */
+  path: string
+}
+
+/** A BreadcrumbList for the given trail, home first. */
+export function breadcrumbJsonLd(crumbs: Crumb[], site: URL | undefined) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: absoluteUrl(crumb.path, site),
+    })),
+  }
+}
+
 /**
  * The site-wide JSON-LD nodes: the Organization behind the site and the
  * WebSite it publishes. Article pages point at them by `@id`.
