@@ -1,0 +1,156 @@
+---
+import type { GetStaticPaths } from "astro"
+import { render } from "astro:content"
+import ArticleCard from "@/components/ArticleCard.astro"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import {
+  type Article,
+  ARTICLES_PATH,
+  ARTICLES_TITLE,
+  absoluteUrl,
+  allArticles,
+  articleMarkdownPath,
+  articlePath,
+  FEED_PATH,
+  formatDate,
+  modifiedAt,
+  withBase,
+} from "@/lib/articles"
+import { sectionOf } from "@/lib/sections"
+import { organizationId, siteJsonLd, websiteId } from "@/lib/siteJsonLd"
+
+/**
+ * /articles/<slug>/: one article. Every article gets a page, but one with no
+ * section tag isn't listed anywhere and stays out of search.
+ */
+export const getStaticPaths = (async () => {
+  const articles = await allArticles()
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article, articles },
+  }))
+}) satisfies GetStaticPaths
+
+interface Props {
+  article: Article
+  articles: Article[]
+}
+
+const { article, articles } = Astro.props
+const { title, description, publishedAt, categories, authors, cover } =
+  article.data
+const { Content } = await render(article)
+
+const site = Astro.site
+const section = sectionOf(categories)
+const canonicalPath = articlePath(article.id)
+const canonicalUrl = absoluteUrl(canonicalPath, site)
+const updated = modifiedAt(article)
+const more = articles
+  .filter(
+    (other) => other.id !== article.id && sectionOf(other.data.categories)
+  )
+  .slice(0, 3)
+
+const jsonLd = [
+  ...siteJsonLd(site),
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#article`,
+    headline: title,
+    description,
+    url: canonicalUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    inLanguage: "en",
+    datePublished: publishedAt.toISOString(),
+    dateModified: updated.toISOString(),
+    ...(cover ? { image: [absoluteUrl(cover.src, site)] } : {}),
+    ...(categories.length
+      ? {
+          articleSection: section?.label ?? categories[0],
+          keywords: categories.join(", "),
+        }
+      : {}),
+    author: authors.length
+      ? authors.map((author) => ({
+          "@type": "Person",
+          name: author.name,
+          ...(author.x ? { sameAs: [`https://x.com/${author.x}`] } : {}),
+        }))
+      : { "@id": organizationId(site) },
+    publisher: { "@id": organizationId(site) },
+    isPartOf: { "@id": websiteId(site) },
+  },
+]
+---
+
+<BaseLayout
+  title={`${title} | Lumen`}
+  socialTitle={title}
+  description={description}
+  canonical={canonicalPath}
+  image={cover?.src}
+  type="article"
+  article={{
+    publishedTime: publishedAt,
+    modifiedTime: updated,
+    authors: authors.map((author) => author.name),
+  }}
+  alternates={[
+    { type: "application/rss+xml", href: FEED_PATH, title: ARTICLES_TITLE },
+    { type: "text/markdown", href: articleMarkdownPath(article.id) },
+  ]}
+  robots={section ? "index, follow, max-image-preview:large" : "noindex, follow"}
+  jsonLd={jsonLd}
+>
+  <main>
+    <article class="prose">
+      <p class="meta">
+        <a href={withBase(ARTICLES_PATH)}>All articles</a>
+        {section && <> · {section.label}</>}
+      </p>
+      <h1>{title}</h1>
+      <p class="meta">
+        {authors.map((author) => author.name).join(", ")}
+        {authors.length > 0 && " · "}
+        <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+        {
+          article.data.updatedAt && (
+            <>
+              {" "}
+              · Updated{" "}
+              <time datetime={article.data.updatedAt.toISOString()}>
+                {formatDate(article.data.updatedAt)}
+              </time>
+            </>
+          )
+        }
+      </p>
+      {
+        cover && (
+          <img
+            class="cover"
+            src={withBase(cover.src)}
+            alt={cover.alt}
+            width={cover.width}
+            height={cover.height}
+          />
+        )
+      }
+      <Content />
+    </article>
+    {
+      more.length > 0 && (
+        <section>
+          <h2>More articles</h2>
+          <ul class="grid">
+            {more.map((other) => (
+              <ArticleCard article={other} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </main>
+</BaseLayout>

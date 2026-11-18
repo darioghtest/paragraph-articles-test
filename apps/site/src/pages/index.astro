@@ -1,0 +1,28 @@
+---
+import ArticleCard from "@/components/ArticleCard.astro"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import { listedArticles, withBase } from "@/lib/articles"
+import { siteJsonLd } from "@/lib/siteJsonLd"
+
+const latest = (await listedArticles()).slice(0, 3)
+---
+
+<BaseLayout
+  title="Lumen | Docs that keep up with your product"
+  description="Lumen is a docs tool that keeps product docs current as your team ships."
+  canonical="/"
+  jsonLd={siteJsonLd(Astro.site)}
+>
+  <main>
+    <h1>Docs that keep up with your product</h1>
+    <p>
+      Lumen watches what your team ships and drafts the doc changes for you to
+      review.
+    </p>
+    <h2>Latest articles</h2>
+    <ul class="grid">
+      {latest.map((article) => <ArticleCard article={article} />)}
+    </ul>
+    <p><a href={withBase("/articles/")}>All articles</a></p>
+  </main>
+</BaseLayout>

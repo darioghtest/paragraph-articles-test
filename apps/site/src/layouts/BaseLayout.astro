@@ -1,0 +1,28 @@
+---
+import SiteHead from "@/components/SiteHead.astro"
+import { withBase } from "@/lib/articles"
+import "@/styles/site.css"
+
+type Props = Parameters<typeof SiteHead>[0]
+
+const props = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SiteHead {...props} />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="logo" href={withBase("/")}>Lumen</a>
+      <nav aria-label="Main">
+        <a href={withBase("/articles/")}>Articles</a>
+      </nav>
+    </header>
+    <slot />
+    <footer class="site-footer">
+      <p>Lumen is a fictional docs tool. This site is a test fixture.</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from "astro"
+import ArticlesPage from "@/components/ArticlesPage.astro"
+import { listedArticles, sectionsWithPosts } from "@/lib/articles"
+import type { Section } from "@/lib/sections"
+
+/** One page per section that has articles; any other tag is a 404. */
+export const getStaticPaths = (async () => {
+  const articles = await listedArticles()
+  return sectionsWithPosts(articles).map((section) => ({
+    params: { tag: section.tag },
+    props: { section, articles },
+  }))
+}) satisfies GetStaticPaths
+
+interface Props {
+  section: Section
+  articles: Awaited<ReturnType<typeof listedArticles>>
+}
+
+const { section, articles } = Astro.props
+---
+
+<ArticlesPage articles={articles} section={section} />

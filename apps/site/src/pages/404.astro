@@ -1,0 +1,20 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import { withBase } from "@/lib/articles"
+---
+
+<BaseLayout
+  title="Page not found | Lumen"
+  description="This page doesn't exist."
+  canonical="/404/"
+  robots="noindex"
+>
+  <main>
+    <h1>Page not found</h1>
+    <p>
+      This page doesn't exist. Try the <a href={withBase("/articles/")}
+        >articles</a
+      >.
+    </p>
+  </main>
+</BaseLayout>

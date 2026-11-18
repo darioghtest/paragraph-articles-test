@@ -1,0 +1,100 @@
+---
+/**
+ * The /articles listing in its two shapes: with no `section` it is every
+ * listed article, with a `section` it is that section's articles. Both share
+ * the section tabs. Only articles with a section tag are listed.
+ */
+import ArticleCard from "@/components/ArticleCard.astro"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+import {
+  type Article,
+  ARTICLES_DESCRIPTION,
+  ARTICLES_PATH,
+  ARTICLES_TITLE,
+  absoluteUrl,
+  FEED_PATH,
+  sectionPath,
+  sectionsWithPosts,
+  withBase,
+} from "@/lib/articles"
+import { type Section, sectionOf } from "@/lib/sections"
+import { siteJsonLd, websiteId } from "@/lib/siteJsonLd"
+
+interface Props {
+  articles: Article[]
+  section?: Section
+}
+
+const { articles, section } = Astro.props
+const tabs = sectionsWithPosts(articles)
+const shown = section
+  ? articles.filter((a) => sectionOf(a.data.categories)?.tag === section.tag)
+  : articles
+const canonicalPath = section ? sectionPath(section) : ARTICLES_PATH
+const title = section
+  ? `${section.label} articles | Lumen`
+  : `${ARTICLES_TITLE} | Lumen`
+const description = section?.description ?? ARTICLES_DESCRIPTION
+const pageUrl = absoluteUrl(canonicalPath, Astro.site)
+
+const jsonLd = [
+  ...siteJsonLd(Astro.site),
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${pageUrl}#page`,
+    name: section ? `${section.label} articles` : ARTICLES_TITLE,
+    description,
+    url: pageUrl,
+    isPartOf: { "@id": websiteId(Astro.site) },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: shown.map((article, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: absoluteUrl(`/articles/${article.id}/`, Astro.site),
+        name: article.data.title,
+      })),
+    },
+  },
+]
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalPath}
+  jsonLd={jsonLd}
+  alternates={[
+    { type: "application/rss+xml", href: FEED_PATH, title: ARTICLES_TITLE },
+  ]}
+>
+  <main>
+    <h1>{section?.label ?? "Articles"}</h1>
+    <p class="meta">{description}</p>
+    <nav class="tabs" aria-label="Article sections">
+      <a
+        href={withBase(ARTICLES_PATH)}
+        aria-current={section ? undefined : "page"}>All</a
+      >
+      {
+        tabs.map((tab) => (
+          <a
+            class="section-tab"
+            data-section={tab.tag}
+            href={withBase(sectionPath(tab))}
+            aria-current={tab.tag === section?.tag ? "page" : undefined}
+          >
+            {tab.label}
+          </a>
+        ))
+      }
+    </nav>
+    <ul class="grid">
+      {shown.map((article) => <ArticleCard article={article} />)}
+    </ul>
+    <p class="meta">
+      <a href={withBase(FEED_PATH)}>RSS feed</a>
+    </p>
+  </main>
+</BaseLayout>

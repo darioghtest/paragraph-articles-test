@@ -1,0 +1,105 @@
+:root {
+  --fg: #16181d;
+  --muted: #5b6170;
+  --line: #e4e6eb;
+  --bg: #ffffff;
+  --accent: #3b5bdb;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  line-height: 1.6;
+}
+
+main,
+.site-header,
+.site-footer {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--fg);
+  text-decoration: none;
+}
+
+a {
+  color: var(--accent);
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+  margin: 24px 0;
+}
+
+.tabs a {
+  padding: 8px 0;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.tabs a[aria-current="page"] {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.card img,
+.cover {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.card h3 {
+  margin: 12px 0 4px;
+  font-size: 1.1rem;
+}
+
+.card h3 a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.prose {
+  max-width: 680px;
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 64px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}

@@ -1,0 +1,35 @@
+---
+import { type Article, articlePath, formatDate, withBase } from "@/lib/articles"
+import { sectionOf } from "@/lib/sections"
+
+interface Props {
+  article: Article
+}
+
+const { article } = Astro.props
+const { title, description, publishedAt, cover, categories } = article.data
+const section = sectionOf(categories)
+---
+
+<li class="card" data-article-slug={article.id}>
+  {
+    cover && (
+      <a href={withBase(articlePath(article.id))} tabindex="-1">
+        <img
+          src={withBase(cover.src)}
+          alt={cover.alt}
+          width={cover.width}
+          height={cover.height}
+          loading="lazy"
+        />
+      </a>
+    )
+  }
+  <p class="meta">
+    {section?.label} · <time datetime={publishedAt.toISOString()}
+      >{formatDate(publishedAt)}</time
+    >
+  </p>
+  <h3><a href={withBase(articlePath(article.id))}>{title}</a></h3>
+  <p>{description}</p>
+</li>
