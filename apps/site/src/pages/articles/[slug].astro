@@ -14,6 +14,7 @@ import {
   FEED_PATH,
   formatDate,
   modifiedAt,
+  SITE_NAME,
   withBase,
 } from "@/lib/articles"
 import { sectionOf } from "@/lib/sections"
@@ -51,6 +52,12 @@ const more = articles
     (other) => other.id !== article.id && sectionOf(other.data.categories)
   )
   .slice(0, 3)
+
+const breadcrumbs = [
+  { name: SITE_NAME, path: "/" },
+  { name: ARTICLES_TITLE, path: ARTICLES_PATH },
+  { name: title, path: canonicalPath },
+]
 
 const jsonLd = [
   ...siteJsonLd(site),
@@ -91,6 +98,9 @@ const jsonLd = [
   description={description}
   canonical={canonicalPath}
   image={cover?.src}
+  imageAlt={cover?.alt}
+  imageWidth={cover?.width}
+  imageHeight={cover?.height}
   type="article"
   article={{
     publishedTime: publishedAt,
@@ -103,6 +113,7 @@ const jsonLd = [
   ]}
   robots={section ? "index, follow, max-image-preview:large" : "noindex, follow"}
   jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
 >
   <main>
     <article class="prose">
@@ -135,6 +146,10 @@ const jsonLd = [
             alt={cover.alt}
             width={cover.width}
             height={cover.height}
+            sizes="(min-width: 768px) 720px, 100vw"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
           />
         )
       }
@@ -143,7 +158,7 @@ const jsonLd = [
     {
       more.length > 0 && (
         <section>
-          <h2>More articles</h2>
+          <h2 id="more-articles">More articles</h2>
           <ul class="grid">
             {more.map((other) => (
               <ArticleCard article={other} />
