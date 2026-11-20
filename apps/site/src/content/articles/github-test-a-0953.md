@@ -3,6 +3,7 @@ title: "GitHub test A 0953"
 authors: [{"name":"darioghtest"}]
 updatedAt: 2026-11-20
 categories: ["company"]
+description: "A short test of GitHub publishing."
 publishedAt: 2026-11-20
 ---
 
