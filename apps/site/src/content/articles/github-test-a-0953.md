@@ -9,6 +9,6 @@ publishedAt: 2026-11-20
 
 This is a test article for checking GitHub publishing from Paragraph.
 
-The second paragraph says the original sentence that we will edit later.
+The second paragraph says the sentence after its first update.
 
 A third short paragraph closes this test.
