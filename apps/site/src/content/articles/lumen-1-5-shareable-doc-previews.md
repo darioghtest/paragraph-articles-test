@@ -1,9 +1,11 @@
 ---
-title: "Lumen 1.5: shareable doc previews"
-authors: [{"name":"darioghtest"}]
+title: "Lumen 1.5: preview links for every docs change"
+authors:
+  - name: dario
 updatedAt: 2026-11-18
-categories: ["changelog"]
-description: "Every docs change now gets a preview link you can share before it merges."
+categories:
+  - changelog
+description: Every docs change now gets a preview link you can share before it merges.
 publishedAt: 2026-11-18
 ---
 
